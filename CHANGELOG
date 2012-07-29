@@ -1,3 +1,7 @@
+v 0.1.1
+
+- included UUID generation for keys of new ZSets for union and intersection
+
 v 0.1.0
 
 - stable

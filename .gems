@@ -1,4 +1,8 @@
+# default.gems generated gem export file. Note that any env variable settings will be missing. Append these after using a ';' field separator
+
 minitest -v3.2.0
 nest -v1.1.1
 ohm -v1.0.2
 redis -v2.2.2
+scrivener -v0.0.3
+uuidtools -v2.1.3

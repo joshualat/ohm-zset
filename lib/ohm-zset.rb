@@ -1,5 +1,6 @@
 require 'ohm'
 require 'time'
+require 'uuidtools'
 
 module Ohm
   class Model
@@ -166,7 +167,7 @@ module Ohm
     end
 
     def intersect (set, w1=1.0, w2=1.0)
-      new_key = "ZSet:#{key}&&#{set.key}"
+      new_key = generate_uuid
       new_set = Ohm::ZSet.new(new_key, model.key, model, score_field)
       db.zinterstore(new_set.key, [key, set.key], :weights => [w1, w2])      
       new_set
@@ -176,14 +177,14 @@ module Ohm
       sets = sets.map(&:key)
       sets.push(key)
       weights = [1.0] * sets.length if weights = []
-      new_key = "ZSet:" + sets.join("&&")
+      new_key = generate_uuid
       new_set = Ohm::ZSet.new(new_key, model.key, model, score_field)
       db.zinterstore(new_set.key, sets, :weights => weights)
       new_set
     end
 
     def union (set, w1=1.0, w2=1.0)
-      new_key = "ZSet:#{key}||#{set.key}"
+      new_key = generate_uuid
       new_set = Ohm::ZSet.new(new_key, model.key, model, score_field)
       db.zunionstore(new_set.key, [key, set.key], :weights => [w1, w2])
       new_set
@@ -193,7 +194,7 @@ module Ohm
       sets = sets.map(&:key)
       sets.push(key)
       weights = [1.0] * sets.length if weights = []
-      new_key = "ZSet:" + sets.join("&&")
+      new_key = generate_uuid
       new_set = Ohm::ZSet.new(new_key, model.key, model, score_field)
       db.zunionstore(new_set.key, sets, :weights => weights)
       new_set
@@ -243,6 +244,11 @@ module Ohm
 
     def clear
       remrangebyrank(0, -1)
+    end
+
+    protected
+    def generate_uuid
+      "ZSet:" + UUIDTools::UUID.random_create.to_s
     end
 
     private

@@ -511,4 +511,14 @@ describe Ohm do
     assert_equal [], b.zlittles.to_a.map(&:name)
   end
 
+  it "can clone itself to another instance" do
+    b, l1, l2, l3, l4 = setup_2
+    clone = b.zlittles.duplicate
+    assert_equal ["L1", "L2", "L3", "L4"], clone.to_a.map(&:name)
+    assert_equal 1, clone.score(l1)
+    assert_equal 2, clone.score(l2)
+    assert_equal 3, clone.score(l3)
+    assert_equal 4, clone.score(l4)
+  end
+
 end

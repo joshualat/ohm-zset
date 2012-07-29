@@ -246,9 +246,20 @@ module Ohm
       remrangebyrank(0, -1)
     end
 
-    protected
-    def generate_uuid
+    def ZSet.generate_uuid
       "ZSet:" + UUIDTools::UUID.random_create.to_s
+    end
+
+    def generate_uuid
+      ZSet.generate_uuid
+    end
+
+    def ZSet.random_instance (model, score_field)
+      Ohm::ZSet.new(Ohm::ZSet.generate_uuid, model.key, model, score_field)
+    end
+
+    def duplicate
+      intersect(self, 1.0, 0.0)
     end
 
     private

@@ -147,4 +147,4 @@ Redis allows only numerical scores so DateTime and strings objects are first con
 You can use the *starts_with* function when dealing with string sorted sets. It returns all the elements of the set with a score field value that starts with the specified string.
 
 ## Copyright
-Copyright (c) 2012 [Joshua Arvin Lat](www.joshualat.com). See LICENSE for more details.
+Copyright (c) 2012 [Joshua Arvin Lat](http://www.joshualat.com). See LICENSE for more details.

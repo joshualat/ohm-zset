@@ -1,0 +1,4 @@
+v 0.1.0
+
+- stable
+- Ohm basic support for Redis sorted sets

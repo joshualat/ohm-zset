@@ -59,7 +59,7 @@ b.zsmalls.to_a.map(&:name)
 # => ["S5", "S4", "S3", "S6", "S2", "S1"]
 ```
 
-You can update the score of an element by using *update*.
+You can update the score of an element by using *update*. There is also a *count* function that returns the number of elements with scores inside a specified range.
 
 ## Deleting Elements
 **Ohm-ZSET** includes *delete* for deleting a single element, *clear* for deleting all elements, and *remrangebyrank* and *remrangebyscore* for deleting selected elements.
@@ -80,7 +80,7 @@ b.zsmalls.to_a.map(&:name)
 It also has *destroy!* to delete the key of the sorted set.
 
 ## Set Intersection and Union
-Set intersection between sorted sets and sets are allowed.
+Set intersection between sorted sets and sets are allowed. You can use *intersect*, *intersect_multiple*, *union*, and *union_multiple* between sets and sorted sets.
 
 ```ruby
 b.smalls.add(s1)
@@ -92,5 +92,59 @@ b.zsmalls.intersect(b.smalls).to_a.map(&:name)
 # => ["S4", "S2", "S1"]
 ```
 
-**Ohm-ZSET** allows union and intersection of multiple sets and sorted sets with weights.
+The sorted set allows union and intersection of multiple sets and sorted sets with weights.
 Result of intersection and union is another ZSET.
+
+## Scoring Functions
+**Ohm-ZSET** also supports custom scoring functions. The default scoring function is ZScore::Integer.
+There are also available built-in scoring functions in the module.
+
+```ruby
+class Bigger < Ohm::Model
+  include Ohm::ZScores
+
+  zset :zlittles, :Little, :score
+
+  # Custom scoring function
+  zset :zsmalls, :Small, :value, lambda{ |x| Integer(x)+1 }
+
+  # Built-in scoring functions
+  zset :zlittles, :Little, :score, ZScore::Float
+  zset :zbools, :Bool, :is_valid, ZScore::Boolean
+  zset :zdts, :DT, :last_login, ZScore::DateTime
+
+  # Built-in string sorting functions
+  zset :zbools2, :Bool, :name, ZScore::String
+  zset :zbools3, :Bool, :name, ZScore::StringInsensitive
+  zset :zbools4, :Bool, :name, ZScore::StringInsensitiveHigh
+end
+
+class Bool < Ohm::Model
+  attribute :name
+  attribute :is_valid
+end
+
+class DT < Ohm::Model
+  attribute :name
+  attribute :last_login
+end
+
+class Small < Ohm::Model
+  attribute :name 
+  attribute :value
+end
+
+class Little < Ohm::Model
+  attribute :name
+  attribute :score
+end
+
+```
+
+Redis allows only numerical scores so DateTime and strings objects are first converted to numbers and then stored as scores.
+**Note**: Note that the string scoring algorithm is limited only to the first 9 characters because of the floating point accuracy limit.
+
+You can use the *starts_with* function when dealing with string sorted sets. It returns all the elements of the set with a score field value that starts with the specified string.
+
+## Copyright
+Copyright (c) 2012 [Joshua Arvin Lat](www.joshualat.com). See LICENSE for more details.

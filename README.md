@@ -1,6 +1,6 @@
 # ohm-zset
 
-Ohm Sorted Set (ZSET) support
+Ohm Sorted Set (ZSET) support for Redis.
 
 ## Basic Usage
 
@@ -33,6 +33,7 @@ b.zsmalls.to_a.map(&:size)
 ```
 
 ## Interacting with the elements of the set
+**Ohm-ZSET** includes *get*, *rank*, *revrank*, *score*, *range*, *revrange*, *rangebyscore*, *revrangebyscore*
 
 ```ruby
 
@@ -57,6 +58,7 @@ b.zsmalls.to_a.map(&:name)
 ```
 
 ## Deleting Elements
+**Ohm-ZSET** includes *delete* for deleting a single element, *clear* for deleting all elements, and *remrangebyrank* and *remrangebyscore* for deleting selected elements.
 
 ```ruby
 b.zsmalls.delete(s6)

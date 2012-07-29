@@ -142,8 +142,8 @@ end
 ```
 
 Redis allows only numerical scores so DateTime and strings objects are first converted to numbers and then stored as scores.
-**Note**: Note that the string scoring algorithm is limited only to the first 9 characters because of the floating point accuracy limit.
 
+**Note**: The string scoring algorithm is limited only to the first 9 characters because of the floating point accuracy limit.
 You can use the *starts_with* function when dealing with string sorted sets. It returns all the elements of the set with a score field value that starts with the specified string.
 
 ## Copyright

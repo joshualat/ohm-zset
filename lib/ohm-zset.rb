@@ -1,6 +1,8 @@
 require 'ohm'
 require 'time'
 require 'uuidtools'
+require_relative './suppress-warnings.rb'
+require_suppress 'sourcify'
 
 module Ohm
   class Model
@@ -13,6 +15,42 @@ module Ohm
       end
         
     end
+  end
+
+  module Utils
+    def self.proc_to_string (function)
+      function.to_source
+    end
+
+    def self.string_to_proc (function)
+      eval function
+    end
+
+    def self.score_field_to_string (score_field)
+      string_list = []
+      lambda_function = score_field.each do |field|
+        break field if field.is_a? Proc
+        string_list.push(field.to_s)
+        break lambda{ |x| x.to_i } if field == score_field.last
+      end
+
+      string_list.push Ohm::Utils.proc_to_string(lambda_function)
+      string_list.join(":")
+    end
+
+    def self.string_to_score_field (score_field)
+      string_list = score_field.split(":")
+      return_list = []
+      string_list.each do |field|
+        if field.include? 'proc'
+          return_list.push Ohm::Utils.string_to_proc field
+        else
+          return_list.push field.to_sym
+        end
+      end
+      return_list
+    end
+
   end
 
   module ZScores
@@ -106,15 +144,6 @@ module Ohm
     # Fetch data from Redis
     def to_a
       fetch(ids)
-    end
-
-    def sort(options = {})
-      if options.has_key?(:get)
-        options[:get] = namespace["*->%s" % options[:get]]
-        return execute { |key| db.sort(key, options) }
-      end
-
-      fetch(execute { |key| db.sort(key, options) })
     end
 
     def include? (model)
@@ -246,7 +275,7 @@ module Ohm
       remrangebyrank(0, -1)
     end
 
-    def ZSet.generate_uuid
+    def self.generate_uuid
       "ZSet:" + UUIDTools::UUID.random_create.to_s
     end
 
@@ -254,12 +283,36 @@ module Ohm
       ZSet.generate_uuid
     end
 
-    def ZSet.random_instance (model, score_field)
-      Ohm::ZSet.new(Ohm::ZSet.generate_uuid, model.key, model, score_field)
+    def self.random_instance (model, score_field)
+      self.new_instance(Ohm::ZSet.generate_uuid, model, score_field)
+    end
+
+    def self.new_instance (name, model, score_field)
+      self.new(name, model.key, model, score_field)
+    end
+
+    def save_set
+      db.hmset("ZSet:"+key, *get_hmset_attrs)
+    end
+
+    def self.load_set (name)
+      new_model, new_score_field = Ohm.redis.hmget("ZSet:" + name, "model", "score_field")
+      return nil if new_model == nil and new_score_field == nil
+
+      new_model = Ohm::Utils.const(self.class, new_model.to_sym)
+      new_score_field = Ohm::Utils.string_to_score_field new_score_field
+      return_instance = Ohm::ZSet.new(name, new_model.key, new_model, new_score_field)
     end
 
     def duplicate
       intersect(self, 1.0, 0.0)
+    end
+
+    def get_hmset_attrs
+      return_list = []
+      return_list << "model" << model.to_s
+      return_list << "score_field" << Utils.score_field_to_string(score_field)
+      return_list
     end
 
     private

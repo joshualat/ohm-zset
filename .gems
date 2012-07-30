@@ -1,8 +1,15 @@
-# default.gems generated gem export file. Note that any env variable settings will be missing. Append these after using a ';' field separator
+# .gems generated gem export file. Note that any env variable settings will be missing. Append these after using a ';' field separator
 
+file-tail -v1.0.10
 minitest -v3.2.0
 nest -v1.1.1
 ohm -v1.0.2
+redis -v3.0.1
 redis -v2.2.2
+ruby2ruby -v1.3.1
+ruby_parser -v2.3.1
 scrivener -v0.0.3
+sexp_processor -v3.2.0
+sourcify -v0.5.0
+tins -v0.4.3
 uuidtools -v2.1.3

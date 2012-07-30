@@ -521,4 +521,35 @@ describe Ohm do
     assert_equal 4, clone.score(l4)
   end
 
+  it "can convert a procedure block to string and back" do
+    x = lambda { |x| x + 1 }
+    y = Ohm::Utils.proc_to_string x
+    assert_equal "proc { |x| (x + 1) }", y
+    z = Ohm::Utils.string_to_proc y
+    assert_equal 3, z.call(2)
+  end
+
+  it "can convert a score_field list to string and back" do
+    score_field = [:n1, :n2, :n3, lambda { |x| x + 1 }]
+    score_field_string = Ohm::Utils.score_field_to_string score_field
+    assert_equal "n1:n2:n3:proc { |x| (x + 1) }", score_field_string
+
+    score_field_list = Ohm::Utils.string_to_score_field score_field_string
+    assert_equal :n1, score_field_list[0]
+    assert_equal :n2, score_field_list[1]
+    assert_equal :n3, score_field_list[2]
+    assert_equal 3, score_field_list[3].call(2)
+  end
+
+  it "can save and load sets by name" do
+    b = setup_1
+    sorted_set = b.zlittles
+    sorted_set.save_set
+    sorted_set_2 = Ohm::ZSet.load_set(sorted_set.key)
+    assert_equal sorted_set_2.to_a.map(&:name), sorted_set.to_a.map(&:name)
+
+    sorted_set_2.add(Little.create(name:'X1',score:29))
+    assert_equal sorted_set_2.to_a.map(&:name), sorted_set.to_a.map(&:name)    
+  end
+
 end

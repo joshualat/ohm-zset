@@ -146,5 +146,18 @@ Redis allows only numerical scores so DateTime and strings objects are first con
 **Note**: The string scoring algorithm is limited only to the first 9 characters because of the floating point accuracy limit.
 You can use the *starts_with* function when dealing with string sorted sets. It returns all the elements of the set with a score field value that starts with the specified string.
 
+## Saving and Loading ZSet instances by name / key
+
+```ruby
+
+sorted_set = b.zlittles
+sorted_set.save_set
+
+sorted_set_2 = Ohm::ZSet.load_set(sorted_set.key)
+sorted_set_2.add(Little.create(name:'X1',score:29))
+
+# sorted_set and sorted_set_2 are pointing to same ZSet instance
+```
+
 ## Copyright
 Copyright (c) 2012 [Joshua Arvin Lat](http://www.joshualat.com). See LICENSE for more details.

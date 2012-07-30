@@ -95,6 +95,15 @@ b.zsmalls.intersect(b.smalls).to_a.map(&:name)
 The sorted set allows union and intersection of multiple sets and sorted sets with weights.
 Result of intersection and union is another ZSET.
 
+It also allows intersection and union to a new set with the specified name.
+
+```ruby
+zunion = Ohm::ZSet.union_multiple("zunion", [zlittles, slittles, zlittles2, zlittles3])
+
+zunion.key
+# => "zunion"
+```
+
 ## Scoring Functions
 **Ohm-ZSET** also supports custom scoring functions. The default scoring function is ZScore::Integer.
 There are also available built-in scoring functions in the module.

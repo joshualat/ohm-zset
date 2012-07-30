@@ -212,6 +212,15 @@ module Ohm
       new_set
     end
 
+    def self.intersect_multiple (new_key, sets, weights = [])
+      base_set = sets[0]
+      weights = [1.0] * sets.length if weights = []
+      new_set = Ohm::ZSet.new(new_key, base_set.model.key, base_set.model, base_set.score_field)
+      sets = sets.map(&:key)
+      Ohm.redis.zinterstore(new_key, sets, :weights => weights)
+      new_set
+    end  
+
     def union (set, w1=1.0, w2=1.0)
       new_key = generate_uuid
       new_set = Ohm::ZSet.new(new_key, model.key, model, score_field)
@@ -228,6 +237,15 @@ module Ohm
       db.zunionstore(new_set.key, sets, :weights => weights)
       new_set
     end
+
+    def self.union_multiple (new_key, sets, weights = [])
+      base_set = sets[0]
+      weights = [1.0] * sets.length if weights = []
+      new_set = Ohm::ZSet.new(new_key, base_set.model.key, base_set.model, base_set.score_field)
+      sets = sets.map(&:key)
+      Ohm.redis.zunionstore(new_key, sets, :weights => weights)
+      new_set
+    end  
 
     def rank (model)
       db.zrank(key, model.id)

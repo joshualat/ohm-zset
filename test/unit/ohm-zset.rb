@@ -341,6 +341,18 @@ describe Ohm do
     assert_equal ["L4"], zintersection.to_a.map(&:name)
   end
 
+  it "can allow intersection of multiple zsets and sets to a new named set" do
+    b = setup_1
+    zlittles = b.zlittles
+    zlittles2 = b.zlittles2
+    zlittles3 = b.zlittles3
+    slittles = b.slittles
+    zintersection = Ohm::ZSet.intersect_multiple("zintersection", [zlittles, zlittles2, zlittles3])    
+
+    assert_equal ["L4"], zintersection.to_a.map(&:name)
+    assert_equal "zintersection", zintersection.key
+  end
+
   it "can allow union of 2 zsets" do
     b = setup_1
     zlittles = b.zlittles
@@ -370,6 +382,18 @@ describe Ohm do
     zunion = b.zlittles.union_multiple([slittles, zlittles2, zlittles3])
 
     assert_equal ["E3","L1","L2","L3","L4","E1","E2"], zunion.to_a.map(&:name)
+  end
+
+  it "can allow union of multiple zsets and sets to a newly named set" do
+    b = setup_1
+    zlittles = b.zlittles
+    zlittles2 = b.zlittles2
+    zlittles3 = b.zlittles3
+    slittles = b.slittles
+    zunion = Ohm::ZSet.union_multiple("zunion", [zlittles, slittles, zlittles2, zlittles3])
+
+    assert_equal ["E3","L1","L2","L3","L4","E1","E2"], zunion.to_a.map(&:name)
+    assert_equal "zunion", zunion.key
   end
 
   it "can get the rank of an element" do

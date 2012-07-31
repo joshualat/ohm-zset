@@ -125,7 +125,7 @@ module Ohm
     end
 
     def count(a = "-inf", b = "+inf")
-      return size if a == "-inf" and b == "+inf"
+      return size if a == "-inf" && b == "+inf"
       db.zcount(key, a, b)
     end
 
@@ -315,7 +315,7 @@ module Ohm
 
     def self.load_set (name)
       new_model, new_score_field = Ohm.redis.hmget("ZSet:" + name, "model", "score_field")
-      return nil if new_model == nil and new_score_field == nil
+      return nil if new_model == nil && new_score_field == nil
 
       new_model = Ohm::Utils.const(self.class, new_model.to_sym)
       new_score_field = Ohm::Utils.string_to_score_field new_score_field

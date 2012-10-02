@@ -80,63 +80,65 @@ module Ohm
       StringInsensitiveHigh = lambda{ |x| Ohm::ZScores.string_insensitive_high(x) }
     end
 
-    def self.boolean(val)
-      case val
-      when "true", "1", true 
-        1
-      when "false", "0", false, nil 
-        0
-      else 
-        1
-      end
-    end
-
-    def self.datetime(val)
-      ::DateTime.parse(val.to_s).to_time.to_i
-    end
-
-    # scoring accurate until 9th character
-    def self.string(val)
-      total_score = 0
-
-      val.each_char.with_index do |c, i|
-        total_score += (c.ord-31) * ((126-32) ** (10 - i))
-        break if i == 9        
-      end
-
-      total_score.to_f
-    end
-
-    # scoring accurate until 9th character
-    def self.string_insensitive(val)
-      total_score = 0
-
-      val.each_char.with_index do |c, i|
-        char_ord = c.ord-31
-        if ('a'..'z').include? c
-          char_ord -= 32
+    class << self
+      def boolean(val)
+        case val
+        when "true", "1", true 
+          1
+        when "false", "0", false, nil 
+          0
+        else 
+          1
         end
-        total_score += (char_ord) * ((126-32) ** (10 - i))
-        break if i == 9        
       end
 
-      total_score.to_f
-    end
+      def datetime(val)
+        ::DateTime.parse(val.to_s).to_time.to_i
+      end
 
-    # scoring accurate until 9th character
-    def self.string_insensitive_high(val)
-      total_score = 0
+      # scoring accurate until 9th character
+      def string(val)
+        total_score = 0
 
-      val.each_char.with_index do |c, i|
-        char_ord = c.ord-31
-        if ('a'..'z').include? c
-          char_ord -= 31.5
+        val.each_char.with_index do |c, i|
+          total_score += (c.ord-31) * ((126-32) ** (10 - i))
+          break if i == 9        
         end
-        total_score += (char_ord) * ((126-32) ** (10 - i))
-        break if i == 9        
+
+        total_score.to_f
       end
 
-      total_score.to_f
+      # scoring accurate until 9th character
+      def string_insensitive(val)
+        total_score = 0
+
+        val.each_char.with_index do |c, i|
+          char_ord = c.ord-31
+          if ('a'..'z').include? c
+            char_ord -= 32
+          end
+          total_score += (char_ord) * ((126-32) ** (10 - i))
+          break if i == 9        
+        end
+
+        total_score.to_f
+      end
+
+      # scoring accurate until 9th character
+      def string_insensitive_high(val)
+        total_score = 0
+
+        val.each_char.with_index do |c, i|
+          char_ord = c.ord-31
+          if ('a'..'z').include? c
+            char_ord -= 31.5
+          end
+          total_score += (char_ord) * ((126-32) ** (10 - i))
+          break if i == 9        
+        end
+
+        total_score.to_f
+      end
     end
   end
 

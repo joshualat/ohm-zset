@@ -1,3 +1,7 @@
+v 0.2
+
+- refactored code
+
 v 0.1.4
 
 - included option to intersect and union multiple sets with specified name

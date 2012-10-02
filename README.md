@@ -16,11 +16,11 @@ class Small < Ohm::Model
 end
 
 b = Big.create
-s1 = Small.create(name:'S1', size:5)
-s2 = Small.create(name:'S2', size:4)
-s3 = Small.create(name:'S3', size:3)
-s4 = Small.create(name:'S4', size:2)
-s5 = Small.create(name:'S5', size:1)
+s1 = Small.create(name: 'S1', size: 5)
+s2 = Small.create(name: 'S2', size: 4)
+s3 = Small.create(name: 'S3', size: 3)
+s4 = Small.create(name: 'S4', size: 2)
+s5 = Small.create(name: 'S5', size: 1)
 
 b.zsmalls.add_list(s1, s2, s3, s4, s5)
 
@@ -28,10 +28,10 @@ b.zsmalls.size
 # => 5
 
 b.zsmalls.to_a.map(&:name)
-# => ["S5", "S4", "S3", "S2", "S1"]
+# => ['S5', 'S4', 'S3', 'S2', 'S1']
 
 b.zsmalls.to_a.map(&:size)
-# => ["1", "2", "3", "4", "5"]
+# => ['1', '2', '3', '4', '5']
 ```
 
 ## Interacting with the elements of the set
@@ -40,10 +40,10 @@ b.zsmalls.to_a.map(&:size)
 ```ruby
 
 b.zsmalls.get(0).name
-# => "S5"
+# => 'S5'
 
 b.zsmalls.range(0, 3).to_a.map(&:name)
-# => ["S5", "S4", "S3", "S2"]
+# => ['S5', 'S4', 'S3', 'S2']
 
 b.zsmalls.revrange(0, 3).each do |small|
   puts "#{small.name} - #{small.size}"
@@ -53,10 +53,10 @@ end
 # => S3 - 3
 # => S4 - 2
 
-s6 = Small.create(name:"S6", size:3.5)
+s6 = Small.create(name:'S6', size:3.5)
 b.zsmalls.add(s6)
 b.zsmalls.to_a.map(&:name)
-# => ["S5", "S4", "S3", "S6", "S2", "S1"]
+# => ['S5', 'S4', 'S3', 'S6', 'S2', 'S1']
 ```
 
 You can update the score of an element by using *update*. There is also a *count* function that returns the number of elements with scores inside a specified range.
@@ -67,7 +67,7 @@ You can update the score of an element by using *update*. There is also a *count
 ```ruby
 b.zsmalls.delete(s6)
 b.zsmalls.to_a.map(&:name)
-# => ["S5", "S4", "S3", "S2", "S1"]
+# => ['S5', 'S4', 'S3', 'S2', 'S1']
 
 b.zsmalls.include? s6
 # => false
@@ -87,9 +87,9 @@ b.smalls.add(s1)
 b.smalls.add(s2)
 b.smalls.add(s4)
 
-# Intersect ["S5", "S4", "S3", "S2", "S1"] with ["S4", "S2", "S1"]
+# Intersect ['S5', 'S4', 'S3', 'S2', 'S1'] with ['S4', 'S2', 'S1']
 b.zsmalls.intersect(b.smalls).to_a.map(&:name)
-# => ["S4", "S2", "S1"]
+# => ['S4', 'S2', 'S1']
 ```
 
 The sorted set allows union and intersection of multiple sets and sorted sets with weights.
@@ -98,10 +98,10 @@ Result of intersection and union is another ZSET.
 It also allows intersection and union to a new set with the specified name.
 
 ```ruby
-zunion = Ohm::ZSet.union_multiple("zunion", [zlittles, slittles, zlittles2, zlittles3])
+zunion = Ohm::ZSet.union_multiple('zunion', [zlittles, slittles, zlittles2, zlittles3])
 
 zunion.key
-# => "zunion"
+# => 'zunion'
 ```
 
 ## Scoring Functions
@@ -115,7 +115,7 @@ class Bigger < Ohm::Model
   zset :zlittles, :Little, :score
 
   # Custom scoring function
-  zset :zsmalls, :Small, :value, lambda{ |x| Integer(x)+1 }
+  zset :zsmalls, :Small, :value, lambda{ |x| Integer(x) + 1 }
 
   # Built-in scoring functions
   zset :zlittles, :Little, :score, ZScore::Float
@@ -163,7 +163,7 @@ sorted_set = b.zlittles
 sorted_set.save_set
 
 sorted_set_2 = Ohm::ZSet.load_set(sorted_set.key)
-sorted_set_2.add(Little.create(name:'X1',score:29))
+sorted_set_2.add(Little.create(name: 'X1',score: 29))
 
 # sorted_set and sorted_set_2 are pointing to same ZSet instance
 ```

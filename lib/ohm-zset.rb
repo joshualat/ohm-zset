@@ -29,15 +29,15 @@ module Ohm
 
   module Utils
     class << self
-      def proc_to_string (function)
+      def proc_to_string(function)
         function.to_source
       end
 
-      def string_to_proc (function)
+      def string_to_proc(function)
         eval function
       end
 
-      def score_field_to_string (score_field)
+      def score_field_to_string(score_field)
         string_list = []
 
         lambda_function = score_field.each do |field|
@@ -52,7 +52,7 @@ module Ohm
         string_list.join(":")
       end
 
-      def string_to_score_field (score_field)
+      def string_to_score_field(score_field)
         string_list = score_field.split(":")
         return_list = []
 

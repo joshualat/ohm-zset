@@ -3,7 +3,7 @@
 file-tail -v1.0.10
 minitest -v3.2.0
 nest -v1.1.1
-ohm -v1.0.2
+ohm -v1.2.0
 redis -v3.0.1
 redis -v2.2.2
 ruby2ruby -v1.3.1

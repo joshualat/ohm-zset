@@ -143,8 +143,7 @@ module Ohm
   end
 
   class ZSet < Struct.new(:key, :namespace, :model, :score_field)
-    include PipelinedFetch
-    include Enumerable
+    include Collection
 
     class << self
       def intersect_multiple(new_key, sets, weights = [])

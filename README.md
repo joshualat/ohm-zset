@@ -197,5 +197,12 @@ sorted_set_2.add(Little.create(name: 'X1',score: 29))
 # sorted_set and sorted_set_2 are pointing to same ZSet instance
 ```
 
+## Updating gem
+```
+
+gem build ohm-zset.gemspec
+gem push ohm-zset-0.X.gem
+```
+
 ## Copyright
 Copyright (c) 2012 [Joshua Arvin Lat](http://www.joshualat.com). See LICENSE for more details.

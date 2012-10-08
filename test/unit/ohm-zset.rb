@@ -286,7 +286,33 @@ describe Ohm do
     end
   end
 
+  it "can return the elements of a specified range of the set with scores" do
+    b = setup_1
+
+    expected_items = [{item: 'L2', score: 2.0},
+                      {item: 'L3', score: 3.0},
+                      {item: 'L4', score: 4.0}]
+
+    b.zlittles.range_with_score(1, 3).each_with_index do |e, i|
+      assert_equal expected_items[i][:item], e[:item].name
+      assert_equal expected_items[i][:score], e[:score]
+    end
+  end
+
   it "can iterate over the elements of a specified range of the reverse sorted set" do
+    b = setup_1
+    
+    expected_items = [{item: 'L3', score: 3.0},
+                      {item: 'L2', score: 2.0},
+                      {item: 'L1', score: 1.0}]
+
+    b.zlittles.revrange_with_score(1, 3).each_with_index do |e, i|
+      assert_equal expected_items[i][:item], e[:item].name
+      assert_equal expected_items[i][:score], e[:score]
+    end
+  end
+
+  it "can iterate over the elements of a specified range of the reverse sorted set with scores" do
     b = setup_1
     expected_items = ["L3", "L2", "L1"]
 
@@ -499,6 +525,28 @@ describe Ohm do
     assert_equal ["L4"], b.zlittles.rangebyscore(2, "+inf", offset: 2, count: 2).to_a.map(&:name)
   end
 
+  it "can get a range of elements by score with scores" do
+    b, = setup_2
+
+    _l1 = {item: 'L1', score: 1.0}
+    _l2 = {item: 'L2', score: 2.0}
+    _l3 = {item: 'L3', score: 3.0}
+    _l4 = {item: 'L4', score: 4.0}
+
+    assert_equal [_l1, _l2, _l3, _l4], b.zlittles.rangebyscore_with_score(0, 4).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l1, _l2], b.zlittles.rangebyscore_with_score(1, 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l3, _l4], b.zlittles.rangebyscore_with_score(3, 4).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l1, _l2, _l3], b.zlittles.rangebyscore_with_score(1, 3).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l1, _l2], b.zlittles.rangebyscore_with_score(0, 4, offset: 0, count: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l3, _l4], b.zlittles.rangebyscore_with_score(0, 4, offset: 2, count: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l2, _l3, _l4], b.zlittles.rangebyscore_with_score(0, 4, offset: 1, count: 3).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l3], b.zlittles.rangebyscore_with_score(1, 3, offset: 2, count: 4).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l1, _l2, _l3, _l4], b.zlittles.rangebyscore_with_score(0, "+inf").to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l4], b.zlittles.rangebyscore_with_score(2, "+inf", offset: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l1, _l2], b.zlittles.rangebyscore_with_score("-inf", 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l4], b.zlittles.rangebyscore_with_score(2, "+inf", offset: 2, count: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+  end
+
   it "can get a range of elements by score in reverse" do
     b, = setup_2
 
@@ -514,6 +562,28 @@ describe Ohm do
     assert_equal ["L2"], b.zlittles.revrangebyscore("+inf", 2, offset: 2).to_a.map(&:name)
     assert_equal ["L2", "L1"], b.zlittles.revrangebyscore(2, "-inf").to_a.map(&:name)
     assert_equal ["L2"], b.zlittles.revrangebyscore("+inf", 2, offset: 2, count: 2).to_a.map(&:name)
+  end
+
+  it "can get a range of elements by score in reverse with scores" do
+    b, = setup_2
+
+    _l1 = {item: 'L1', score: 1.0}
+    _l2 = {item: 'L2', score: 2.0}
+    _l3 = {item: 'L3', score: 3.0}
+    _l4 = {item: 'L4', score: 4.0}
+
+    assert_equal [_l4, _l3, _l2, _l1], b.zlittles.revrangebyscore_with_score(4, 0).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l2, _l1], b.zlittles.revrangebyscore_with_score(2, 1).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l4, _l3], b.zlittles.revrangebyscore_with_score(4, 3).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l3, _l2, _l1], b.zlittles.revrangebyscore_with_score(3, 1).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l4, _l3], b.zlittles.revrangebyscore_with_score(4, 0, offset: 0, count: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l2, _l1], b.zlittles.revrangebyscore_with_score(4, 0, offset: 2, count: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l3, _l2, _l1], b.zlittles.revrangebyscore_with_score(4, 0, offset: 1, count: 3).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l1], b.zlittles.revrangebyscore_with_score(3, 1, offset: 2, count: 4).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l4, _l3, _l2, _l1], b.zlittles.revrangebyscore_with_score("+inf", 0).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l2], b.zlittles.revrangebyscore_with_score("+inf", 2, offset: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l2, _l1], b.zlittles.revrangebyscore_with_score(2, "-inf").to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
+    assert_equal [_l2], b.zlittles.revrangebyscore_with_score("+inf", 2, offset: 2, count: 2).to_a.collect{|x| {item: x[:item].name, score: x[:score]}}
   end
 
   it "can get the number of elements between 2 given scores" do

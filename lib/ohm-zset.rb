@@ -209,8 +209,16 @@ module Ohm
       fetch(ids(a, b))
     end
 
+    def range_with_score(a = 0, b = -1)
+      _return = process_range_with_score { db.zrange(key, a, b, with_scores: true) }
+    end
+
     def revrange(a = 0, b = -1)
       fetch(execute { |key| db.zrevrange(key, a, b) })
+    end
+
+    def revrange_with_score(a = 0, b = -1)
+      _return = process_range_with_score { db.zrevrange(key, a, b, with_scores: true) }
     end
 
     # Fetch data from Redis
@@ -344,11 +352,25 @@ module Ohm
       fetch(execute { |key| db.zrangebyscore(key, a, b, :limit => [limit[:offset], limit[:count]]) })
     end
 
+    def rangebyscore_with_score(a = "-inf", b = "+inf", limit = {})
+      limit[:offset] ||= 0
+      limit[:count] ||= -1
+
+      _return = process_range_with_score { db.zrangebyscore(key, a, b, with_scores: true, :limit => [limit[:offset], limit[:count]]) }
+    end
+
     def revrangebyscore(a = "+inf", b = "-inf", limit = {})
       limit[:offset] ||= 0
       limit[:count] ||= -1
 
       fetch(execute { |key| db.zrevrangebyscore(key, a, b, :limit => [limit[:offset], limit[:count]]) })
+    end
+
+    def revrangebyscore_with_score(a = "+inf", b = "-inf", limit = {})
+      limit[:offset] ||= 0
+      limit[:count] ||= -1
+
+      _return = process_range_with_score { db.zrevrangebyscore(key, a, b, with_scores: true, :limit => [limit[:offset], limit[:count]]) }
     end
 
     def starts_with(query, limit = {})
@@ -404,6 +426,28 @@ module Ohm
 
     def execute
       yield key
+    end
+
+    def process_range_with_score
+      _result = execute { |key| yield }
+
+      _ids = []
+      _scores = []
+
+      _result.each do |_id, _score|
+        _ids << _id
+        _scores << _score
+      end
+
+      _objects = fetch(_ids)
+
+      _return = []
+
+      _objects.each_with_index do |_object, i|
+        _return << {item: _object, score: _scores[i]}
+      end
+
+      _return
     end
   end
 end

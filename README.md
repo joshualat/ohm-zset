@@ -59,6 +59,35 @@ b.zsmalls.to_a.map(&:name)
 # => ['S5', 'S4', 'S3', 'S6', 'S2', 'S1']
 ```
 
+You can also add an element with a custom score.
+
+```ruby
+class Big < Ohm::Model
+  include Ohm::ZScores
+  
+  zset :zcustom, :Bool, nil, ZScore::DateTime
+end
+
+class Bool < Ohm::Model
+  attribute :name
+  attribute :is_valid
+end
+
+b = Big.create
+b1 = Bool.create(name: 'B1', is_valid: "false")
+b2 = Bool.create(name: 'B2', is_valid: "true")
+b3 = Bool.create(name: 'B3', is_valid: "false")
+b4 = Bool.create(name: 'B4', is_valid: "true")
+
+b.zcustom.add(b1, "2012-07-29 06:24:20 +0800")
+b.zcustom.add(b2, "2012-07-25 06:24:20 +0800")
+b.zcustom.add(b3, "2012-07-30 06:24:20 +0800")
+b.zcustom.add(b4, "2012-07-27 06:24:20 +0800")
+
+b.zcustom.to_a.map(&:name)
+# => ['B2', 'B4', 'B1', 'B3']
+```
+
 You can update the score of an element by using *update*. There is also a *count* function that returns the number of elements with scores inside a specified range.
 
 ## Deleting Elements

@@ -14,6 +14,7 @@ class Big < Ohm::Model
   zset :zbools2, :Bool, :name, ZScore::String
   zset :zbools3, :Bool, :name, ZScore::StringInsensitive
   zset :zbools4, :Bool, :name, ZScore::StringInsensitiveHigh
+  zset :zcustom, :Bool, nil, ZScore::DateTime
 end
 
 class Bool < Ohm::Model
@@ -659,5 +660,21 @@ describe Ohm do
     sorted_set_2.add(Little.create(name:'X1',score:29))
 
     assert_equal sorted_set_2.to_a.map(&:name), sorted_set.to_a.map(&:name)
+  end
+
+  it "can add element with custom score" do
+    b = Big.create
+    b1 = Bool.create(name: 'B1', is_valid: "false")
+    b2 = Bool.create(name: 'B2', is_valid: "true")
+    b3 = Bool.create(name: 'B3', is_valid: "false")
+    b4 = Bool.create(name: 'B4', is_valid: "true")
+
+    b.zcustom.add(b1, "2012-07-29 06:24:20 +0800")
+    b.zcustom.add(b2, "2012-07-25 06:24:20 +0800")
+    b.zcustom.add(b3, "2012-07-30 06:24:20 +0800")
+    b.zcustom.add(b4, "2012-07-27 06:24:20 +0800")
+
+    sorted_set = b.zcustom
+    assert_equal ['B2', 'B4', 'B1', 'B3'], sorted_set.to_a.map(&:name)
   end
 end

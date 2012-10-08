@@ -234,18 +234,22 @@ module Ohm
       size == 0
     end
 
-    def add(model)
+    def add(model, custom_score = nil)
       score_value = model
 
       lambda_function = score_field.each do |field|
         break field if field.is_a? Proc
 
-        score_value = model.send(field)
+        score_value = model.send(field) if custom_score.nil?
 
         break lambda{ |x| x.to_i } if field == score_field.last
       end
 
-      db.zadd(key, lambda_function.call(score_value), model.id)
+      if custom_score.nil?
+        db.zadd(key, lambda_function.call(score_value), model.id)
+      else
+        db.zadd(key, lambda_function.call(custom_score), model.id)
+      end
     end
 
     def add_list(*models)

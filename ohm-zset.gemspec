@@ -15,5 +15,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Ohm::Zset::VERSION
 
-  gem.add_dependency "ohm"
+  gem.add_dependency "ohm", "~> 2.0.0"
+  gem.add_dependency "ohm-contrib", "~> 2.0.0"
+  gem.add_dependency "uuidtools", "~> 2.1.3"
+  gem.add_dependency "sourcify", "~> 0.5.0"
 end

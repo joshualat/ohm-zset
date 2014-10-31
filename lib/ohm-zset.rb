@@ -148,7 +148,7 @@ module Ohm
     class << self
       def intersect_multiple(new_key, sets, weights = [])
         base_set = sets[0]
-        weights = [1.0] * sets.length if weights = []
+        weights = [1.0] * sets.length if weights == []
 
         new_set = Ohm::ZSet.new(new_key, base_set.model.key, base_set.model, base_set.score_field)
         sets = sets.map(&:key)
@@ -168,7 +168,7 @@ module Ohm
 
       def union_multiple(new_key, sets, weights = [])
         base_set = sets[0]
-        weights = [1.0] * sets.length if weights = []
+        weights = [1.0] * sets.length if weights == []
 
         new_set = Ohm::ZSet.new(new_key, base_set.model.key, base_set.model, base_set.score_field)
         sets = sets.map(&:key)
@@ -295,7 +295,7 @@ module Ohm
     def intersect_multiple(sets, weights = [])
       sets = sets.map(&:key)
       sets.push(key)
-      weights = [1.0] * sets.length if weights = []
+      weights = [1.0] * sets.length if weights == []
 
       new_key = generate_uuid
       new_set = Ohm::ZSet.new(new_key, model.key, model, score_field)
@@ -306,7 +306,7 @@ module Ohm
     end
 
     def intersect_multiple!(sets, weights = [])
-      weights = [1.0] * sets.length if weights = []
+      weights = [1.0] * sets.length if weights == []
       db.zinterstore(key, sets.map(&:key), :weights => weights)
       self
     end
@@ -324,7 +324,7 @@ module Ohm
       sets = sets.map(&:key)
       sets.push(key)
 
-      weights = [1.0] * sets.length if weights = []
+      weights = [1.0] * sets.length if weights == []
       new_key = generate_uuid
       new_set = Ohm::ZSet.new(new_key, model.key, model, score_field)
 
